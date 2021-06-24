@@ -48,7 +48,7 @@ public class Starter {
                 .setTaskQueue(TASK_QUEUE)
                 .build());
 
-    WorkflowClient.start(workflow::startUploads);
+    WorkflowClient.start(workflow::startUploads, 3, 3);
 
     // Define some packets
     Packet packet11 = new Packet(1, 1, "type1content1");

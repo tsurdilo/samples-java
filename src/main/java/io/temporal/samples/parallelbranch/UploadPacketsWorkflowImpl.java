@@ -28,8 +28,9 @@ import java.util.*;
 import org.slf4j.Logger;
 
 public class UploadPacketsWorkflowImpl implements UploadPacketsWorkflow {
-  private int packetTypes = 3;
-  private int numOfPacketTypesRequired = 3;
+
+  private int numOfPacketTypes;
+  private int numOfPacketTypesRequired;
 
   private Map<Integer, List<Packet>> packetTypeList = new HashMap<>();
 
@@ -41,12 +42,14 @@ public class UploadPacketsWorkflowImpl implements UploadPacketsWorkflow {
           ActivityOptions.newBuilder().setStartToCloseTimeout(Duration.ofSeconds(2)).build());
 
   @Override
-  public String startUploads() {
+  public String startUploads(int numOfPacketTypes, int numOfPacketTypesRequired) {
+    this.numOfPacketTypes = numOfPacketTypes;
+    this.numOfPacketTypesRequired = numOfPacketTypesRequired;
 
     List<Promise<Void>> typePromiseList = new ArrayList<>();
 
     // set up the packet type list
-    for (int i = 1; i <= packetTypes; i++) {
+    for (int i = 1; i <= numOfPacketTypes; i++) {
       packetTypeList.put(i, new ArrayList<>());
 
       Promise<Void> typePromise = Async.procedure(this::receivePacketTypeBranch, i);

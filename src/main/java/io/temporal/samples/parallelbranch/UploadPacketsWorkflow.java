@@ -26,7 +26,7 @@ import io.temporal.workflow.WorkflowMethod;
 @WorkflowInterface
 public interface UploadPacketsWorkflow {
   @WorkflowMethod
-  String startUploads();
+  String startUploads(int numOfPacketTypes, int numOfPacketTypesRequired);
 
   @SignalMethod
   void receivePacket(Packet packet);
