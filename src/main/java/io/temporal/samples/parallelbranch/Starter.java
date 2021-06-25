@@ -58,7 +58,7 @@ public class Starter {
       e.printStackTrace();
     }
 
-    // start sending signals in or der
+    // start sending appovals
     WorkflowStub untyped = WorkflowStub.fromTyped(workflow);
     untyped.signal("approvePacket", 1);
     untyped.signal("approvePacket", 2);

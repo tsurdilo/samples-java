@@ -26,11 +26,8 @@ import io.temporal.workflow.Promise;
 import io.temporal.workflow.Workflow;
 import java.time.Duration;
 import java.util.*;
-import org.slf4j.Logger;
 
 public class UploadPacketsWorkflowImpl implements UploadPacketsWorkflow {
-
-  private final Logger logger = Workflow.getLogger(UploadPacketsWorkflowImpl.class);
 
   private final Map<Integer, PacketApproval> packetApprovals = new HashMap<>();
 
