@@ -50,11 +50,15 @@ public class Starter {
 
     WorkflowClient.start(workflow::execute, 3);
 
+    // small delay before we start sending approvals
+    // needed so activity can populate the required packets
     try {
       Thread.sleep(3 * 1000);
     } catch (Exception e) {
       e.printStackTrace();
     }
+
+    // start sending signals in or der
     WorkflowStub untyped = WorkflowStub.fromTyped(workflow);
     untyped.signal("approvePacket", 1);
     untyped.signal("approvePacket", 2);
