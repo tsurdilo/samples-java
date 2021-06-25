@@ -66,15 +66,15 @@ public class Starter {
     WorkflowStub untyped = WorkflowStub.fromTyped(workflow);
 
     // send signals in "somewhat random" order
-    untyped.signal("receivePacket", packet11);
-    untyped.signal("receivePacket", packet22);
     untyped.signal("receivePacket", packet33);
-    untyped.signal("receivePacket", packet12);
-    untyped.signal("receivePacket", packet23);
-    untyped.signal("receivePacket", packet32);
+    untyped.signal("receivePacket", packet21);
+    untyped.signal("receivePacket", packet11);
     untyped.signal("receivePacket", packet13);
     untyped.signal("receivePacket", packet31);
-    untyped.signal("receivePacket", packet21);
+    untyped.signal("receivePacket", packet23);
+    untyped.signal("receivePacket", packet32);
+    untyped.signal("receivePacket", packet22);
+    untyped.signal("receivePacket", packet12);
 
     String result = untyped.getResult(String.class);
 

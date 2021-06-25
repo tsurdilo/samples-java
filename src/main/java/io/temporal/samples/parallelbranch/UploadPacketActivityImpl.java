@@ -20,20 +20,28 @@
 package io.temporal.samples.parallelbranch;
 
 import io.temporal.activity.Activity;
+import io.temporal.activity.ActivityExecutionContext;
 import java.util.List;
 
 public class UploadPacketActivityImpl implements UploadPacketActivity {
   @Override
-  public void uploadPackets(List<Packet> packets) {
+  public String uploadPackets(List<Packet> packets) {
+    ActivityExecutionContext activityExecutionContext = Activity.getExecutionContext();
+    for (Packet p : packets) {
+      System.out.println(
+          "Activity "
+              + activityExecutionContext.getInfo().getActivityId()
+              + " - Uploading packet with type: "
+              + p.getType()
+              + " and id: "
+              + p.getId());
+    }
     // simulate 1 sec "upload"
     try {
       Thread.sleep(1 * 1000);
     } catch (Exception e) {
       throw Activity.wrap(e);
     }
-    for (Packet p : packets) {
-      System.out.println(
-          "Activity - Uploaded packet with type: " + p.getType() + " and id: " + p.getId());
-    }
+    return "activity done";
   }
 }
