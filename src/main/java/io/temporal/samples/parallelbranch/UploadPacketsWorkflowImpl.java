@@ -21,62 +21,65 @@ package io.temporal.samples.parallelbranch;
 
 import io.temporal.activity.ActivityOptions;
 import io.temporal.workflow.Async;
+import io.temporal.workflow.CompletablePromise;
 import io.temporal.workflow.Promise;
 import io.temporal.workflow.Workflow;
+
 import java.time.Duration;
 import java.util.*;
+
 import org.slf4j.Logger;
 
 public class UploadPacketsWorkflowImpl implements UploadPacketsWorkflow {
 
-  private int numOfPacketTypesRequired;
-  private int packetTypesUploaded = 0;
 
-  private final Map<Integer, List<Packet>> packetTypeList = new HashMap<>();
+    private final Logger logger = Workflow.getLogger(UploadPacketsWorkflowImpl.class);
 
-  private final Logger logger = Workflow.getLogger(UploadPacketsWorkflowImpl.class);
+    private final Map<Integer, PacketApproval> packetApprovals = new HashMap<>();
 
-  private final UploadPacketActivity activities =
-      Workflow.newActivityStub(
-          UploadPacketActivity.class,
-          ActivityOptions.newBuilder().setStartToCloseTimeout(Duration.ofSeconds(5)).build());
+    private class PacketApproval {
+        private final Packet packet;
+        private int approvalsLeft;
+        private CompletablePromise<Void> approved = Workflow.newPromise();
 
-  @Override
-  public String startUploads(int numOfPacketTypes, int numOfPacketTypesRequired) {
-    this.numOfPacketTypesRequired = numOfPacketTypesRequired;
+        private PacketApproval(Packet packet, int approvalsLeft) {
+            this.packet = packet;
+            this.approvalsLeft = approvalsLeft;
+        }
 
-    List<Promise<Object>> typePromiseList = new ArrayList<>();
+        public Promise<Void> getUploaded() {
+            return approved;
+        }
 
-    // set up the packet type list
-    for (int i = 1; i <= numOfPacketTypes; i++) {
-      packetTypeList.put(i, new ArrayList<>());
-      typePromiseList.add(
-          Async.function(this::waitToReceivePackets, i)
-              .thenApply(
-                  (pt) ->
-                      Async.function(activities::uploadPackets, pt)
-                          .thenApply((ar) -> packetTypesUploaded++)));
+        public void approve() {
+            if (--approvalsLeft == 0) {
+                approved.completeFrom(Async.procedure(activities::uploadPacket, packet));
+            }
+        }
+
     }
 
-    Promise.anyOf(typePromiseList);
+    private final UploadPacketActivity activities =
+            Workflow.newActivityStub(
+                    UploadPacketActivity.class,
+                    ActivityOptions.newBuilder().setStartToCloseTimeout(Duration.ofSeconds(5)).build());
 
-    Workflow.await(() -> packetTypesUploaded == numOfPacketTypes);
-    return "done";
-  }
+    @Override
+    public void execute(int approvalsNeeded) {
+        List<Promise<Void>> packetsUploaded = new ArrayList<>();
+        List<Packet> packets = activities.generatePackets();
+        // set up the packet type list
+        for (Packet packet : packets) {
+            PacketApproval approval = new PacketApproval(packet, approvalsNeeded);
+            packetApprovals.put(packet.getId(), approval);
+            packetsUploaded.add(approval.getUploaded());
+        }
 
-  @Override
-  public void receivePacket(Packet packet) {
-    if (packetTypeList.containsKey(packet.getType())) {
-      packetTypeList.get(packet.getType()).add(packet);
-    } else {
-      logger.warn("Invalid packet type: " + packet.getType());
+        Promise.allOf(packetsUploaded);
     }
-  }
 
-  private List<Packet> waitToReceivePackets(int packetType) {
-    Workflow.await(
-        Duration.ofSeconds(10),
-        () -> packetTypeList.get(packetType).size() == numOfPacketTypesRequired);
-    return packetTypeList.get(packetType);
-  }
+    @Override
+    public void approvePacket(int packetId) {
+        packetApprovals.get(packetId).approve();
+    }
 }

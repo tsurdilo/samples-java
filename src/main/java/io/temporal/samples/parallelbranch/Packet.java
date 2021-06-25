@@ -20,39 +20,23 @@
 package io.temporal.samples.parallelbranch;
 
 public class Packet {
-  private int type;
-  private int id;
-  private String content;
+    private int id;
+    private String content;
 
-  public Packet() {}
+    public Packet() {
+    }
 
-  public Packet(int type, int id, String content) {
-    this.type = type;
-    this.id = id;
-    this.content = content;
-  }
+    public Packet(int id, String content) {
+        this.id = id;
+        this.content = content;
+    }
 
-  public int getId() {
-    return id;
-  }
+    public int getId() {
+        return id;
+    }
 
-  public int getType() {
-    return type;
-  }
+    public String getContent() {
+        return content;
+    }
 
-  public void setType(int type) {
-    this.type = type;
-  }
-
-  public void setId(int id) {
-    this.id = id;
-  }
-
-  public String getContent() {
-    return content;
-  }
-
-  public void setContent(String content) {
-    this.content = content;
-  }
 }

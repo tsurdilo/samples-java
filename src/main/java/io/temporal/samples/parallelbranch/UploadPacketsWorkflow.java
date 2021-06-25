@@ -23,11 +23,13 @@ import io.temporal.workflow.SignalMethod;
 import io.temporal.workflow.WorkflowInterface;
 import io.temporal.workflow.WorkflowMethod;
 
+import java.util.List;
+
 @WorkflowInterface
 public interface UploadPacketsWorkflow {
-  @WorkflowMethod
-  String startUploads(int numOfPacketTypes, int numOfPacketTypesRequired);
+    @WorkflowMethod
+    void execute(int numOfPacketTypesRequired);
 
-  @SignalMethod
-  void receivePacket(Packet packet);
+    @SignalMethod
+    void approvePacket(int packetId);
 }
