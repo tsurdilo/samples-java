@@ -44,22 +44,14 @@ public class UploadPacketsWorkflowImpl implements UploadPacketsWorkflow {
   @Override
   public String startUploads(int numOfPacketTypes, int numOfPacketTypesRequired) {
     this.numOfPacketTypesRequired = numOfPacketTypesRequired;
-
-    List<Promise<Object>> typePromiseList = new ArrayList<>();
+    this.numOfPacketTypesRequired = numOfPacketTypesRequired;
 
     // set up the packet type list
     for (int i = 1; i <= numOfPacketTypes; i++) {
       packetTypeList.put(i, new ArrayList<>());
-      typePromiseList.add(
-          Async.function(this::waitToReceivePackets, i)
-              .thenApply(
-                  (pt) ->
-                      Async.function(activities::uploadPackets, pt)
-                          .thenApply((ar) -> packetTypesUploaded++)));
     }
 
-    Promise.anyOf(typePromiseList);
-
+    Async.function(this::waitToReceivePackets, numOfPacketTypesRequired);
     Workflow.await(() -> packetTypesUploaded == numOfPacketTypes);
     return "done";
   }
@@ -74,9 +66,22 @@ public class UploadPacketsWorkflowImpl implements UploadPacketsWorkflow {
   }
 
   private List<Packet> waitToReceivePackets(int packetType) {
-    Workflow.await(
-        Duration.ofSeconds(10),
-        () -> packetTypeList.get(packetType).size() == numOfPacketTypesRequired);
+    List<Promise<Object>> typePromiseList = new ArrayList<>();
+    for (int i : packetTypeList.keySet()) {
+      typePromiseList.add(
+          Async.function(() -> waitForRequiredPacketsForType(i))
+              .thenApply(
+                  (pt) ->
+                      Async.function(activities::uploadPackets, pt)
+                          .thenApply((ar) -> packetTypesUploaded++)));
+    }
+
     return packetTypeList.get(packetType);
+  }
+
+  private List<Packet> waitForRequiredPacketsForType(int type) {
+    Workflow.await(
+        Duration.ofSeconds(10), () -> packetTypeList.get(type).size() == numOfPacketTypesRequired);
+    return packetTypeList.get(type);
   }
 }
