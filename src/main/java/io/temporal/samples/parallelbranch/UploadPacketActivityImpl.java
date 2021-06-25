@@ -31,16 +31,10 @@ public class UploadPacketActivityImpl implements UploadPacketActivity {
       System.out.println(
           "Activity "
               + activityExecutionContext.getInfo().getActivityId()
-              + " - Uploading packet with type: "
+              + " - Uploaded packet with type: "
               + p.getType()
               + " and id: "
               + p.getId());
-    }
-    // simulate 1 sec "upload"
-    try {
-      Thread.sleep(1 * 1000);
-    } catch (Exception e) {
-      throw Activity.wrap(e);
     }
     return "activity done";
   }

@@ -29,7 +29,6 @@ import org.slf4j.Logger;
 
 public class UploadPacketsWorkflowImpl implements UploadPacketsWorkflow {
 
-  private int numOfPacketTypes;
   private int numOfPacketTypesRequired;
   private int packetTypesUploaded = 0;
 
@@ -44,7 +43,6 @@ public class UploadPacketsWorkflowImpl implements UploadPacketsWorkflow {
 
   @Override
   public String startUploads(int numOfPacketTypes, int numOfPacketTypesRequired) {
-    this.numOfPacketTypes = numOfPacketTypes;
     this.numOfPacketTypesRequired = numOfPacketTypesRequired;
 
     List<Promise<Object>> typePromiseList = new ArrayList<>();
