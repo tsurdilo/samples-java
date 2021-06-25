@@ -37,7 +37,7 @@ public class UploadPacketsWorkflowImpl implements UploadPacketsWorkflow {
   private class PacketApproval {
     private final Packet packet;
     private int approvalsLeft;
-    private CompletablePromise<Void> approved = Workflow.newPromise();
+    private CompletablePromise<Void> uploaded = Workflow.newPromise();
 
     private PacketApproval(Packet packet, int approvalsLeft) {
       this.packet = packet;
@@ -45,12 +45,12 @@ public class UploadPacketsWorkflowImpl implements UploadPacketsWorkflow {
     }
 
     public Promise<Void> getUploaded() {
-      return approved;
+      return uploaded;
     }
 
     public void approve() {
       if (--approvalsLeft == 0) {
-        approved.completeFrom(Async.procedure(activities::uploadPacket, packet));
+        uploaded.completeFrom(Async.procedure(activities::uploadPacket, packet));
       }
     }
   }
