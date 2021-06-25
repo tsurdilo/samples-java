@@ -17,7 +17,7 @@
  *  permissions and limitations under the License.
  */
 
-package io.temporal.samples.parallelbranch;
+package io.temporal.samples.uploadpackets;
 
 import io.temporal.activity.Activity;
 import io.temporal.activity.ActivityExecutionContext;
