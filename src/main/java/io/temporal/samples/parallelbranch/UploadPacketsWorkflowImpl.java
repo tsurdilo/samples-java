@@ -75,7 +75,7 @@ public class UploadPacketsWorkflowImpl implements UploadPacketsWorkflow {
                       Async.function(activities::uploadPackets, pt)
                           .thenApply((ar) -> packetTypesUploaded++)));
     }
-
+    Promise.anyOf(typePromiseList).get();
     return packetTypeList.get(packetType);
   }
 
