@@ -36,6 +36,12 @@ public class UploadPacketActivityImpl implements UploadPacketActivity {
               + " and id: "
               + p.getId());
     }
+    // simulate some upload work
+    try {
+      Thread.sleep(2 * 1000);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
     return "activity done";
   }
 }

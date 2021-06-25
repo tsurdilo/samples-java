@@ -39,7 +39,7 @@ public class UploadPacketsWorkflowImpl implements UploadPacketsWorkflow {
   private final UploadPacketActivity activities =
       Workflow.newActivityStub(
           UploadPacketActivity.class,
-          ActivityOptions.newBuilder().setStartToCloseTimeout(Duration.ofSeconds(2)).build());
+          ActivityOptions.newBuilder().setStartToCloseTimeout(Duration.ofSeconds(5)).build());
 
   @Override
   public String startUploads(int numOfPacketTypes, int numOfPacketTypesRequired) {
