@@ -21,27 +21,32 @@ package io.temporal.samples.parallelbranch;
 
 import io.temporal.activity.Activity;
 import io.temporal.activity.ActivityExecutionContext;
+import java.util.ArrayList;
 import java.util.List;
 
 public class UploadPacketActivityImpl implements UploadPacketActivity {
   @Override
-  public String uploadPackets(List<Packet> packets) {
+  public List<Packet> generatePackets() {
+    List<Packet> result = new ArrayList<>();
+    result.add(new Packet(1, "content1"));
+    result.add(new Packet(2, "content2"));
+    result.add(new Packet(3, "content3"));
+    return result;
+  }
+
+  @Override
+  public void uploadPacket(Packet packet) {
     ActivityExecutionContext activityExecutionContext = Activity.getExecutionContext();
-    for (Packet p : packets) {
-      System.out.println(
-          "Activity "
-              + activityExecutionContext.getInfo().getActivityId()
-              + " - Uploaded packet with type: "
-              + p.getType()
-              + " and id: "
-              + p.getId());
-    }
+    System.out.println(
+        "Activity "
+            + activityExecutionContext.getInfo().getActivityId()
+            + " - Uploaded packet with id: "
+            + packet.getId());
     // simulate some upload work
     try {
       Thread.sleep(2 * 1000);
     } catch (Exception e) {
       e.printStackTrace();
     }
-    return "activity done";
   }
 }

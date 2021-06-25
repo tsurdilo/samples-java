@@ -24,5 +24,8 @@ import java.util.List;
 
 @ActivityInterface
 public interface UploadPacketActivity {
-  String uploadPackets(List<Packet> packets);
+
+  List<Packet> generatePackets();
+
+  void uploadPacket(Packet packets);
 }

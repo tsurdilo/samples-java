@@ -48,37 +48,28 @@ public class Starter {
                 .setTaskQueue(TASK_QUEUE)
                 .build());
 
-    WorkflowClient.start(workflow::startUploads, 3, 3);
+    WorkflowClient.start(workflow::execute, 3);
 
-    // Define some packets
-    Packet packet11 = new Packet(1, 1, "type1content1");
-    Packet packet12 = new Packet(1, 2, "type1content2");
-    Packet packet13 = new Packet(1, 3, "type1content3");
-
-    Packet packet21 = new Packet(2, 1, "type2content1");
-    Packet packet22 = new Packet(2, 2, "type2content2");
-    Packet packet23 = new Packet(2, 3, "type2content3");
-
-    Packet packet31 = new Packet(3, 1, "type3content1");
-    Packet packet32 = new Packet(3, 2, "type3content2");
-    Packet packet33 = new Packet(3, 3, "type3content3");
-
+    try {
+      Thread.sleep(3 * 1000);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
     WorkflowStub untyped = WorkflowStub.fromTyped(workflow);
+    untyped.signal("approvePacket", 1);
+    untyped.signal("approvePacket", 2);
+    untyped.signal("approvePacket", 1);
 
-    // send signals in "somewhat random" order
-    untyped.signal("receivePacket", packet33);
-    untyped.signal("receivePacket", packet21);
-    untyped.signal("receivePacket", packet11);
-    untyped.signal("receivePacket", packet13);
-    untyped.signal("receivePacket", packet31);
-    untyped.signal("receivePacket", packet23);
-    untyped.signal("receivePacket", packet32);
-    untyped.signal("receivePacket", packet22);
-    untyped.signal("receivePacket", packet12);
+    untyped.signal("approvePacket", 2);
+    untyped.signal("approvePacket", 3);
+    untyped.signal("approvePacket", 3);
 
-    String result = untyped.getResult(String.class);
+    untyped.signal("approvePacket", 2);
+    untyped.signal("approvePacket", 3);
+    untyped.signal("approvePacket", 1);
 
-    System.out.println(result);
+    untyped.getResult(String.class);
+
     System.exit(0);
   }
 }
