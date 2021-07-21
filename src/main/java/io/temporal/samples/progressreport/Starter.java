@@ -65,6 +65,8 @@ public class Starter {
       }
     }
 
+    // wait till workflow completes...
+    workflow.getResults();
     System.exit(0);
   }
 }
