@@ -1,4 +1,4 @@
-package io.temporal.samples.heartbeatreport;
+package io.temporal.samples.progressreport;
 
 import io.temporal.client.WorkflowClient;
 import io.temporal.client.WorkflowOptions;
