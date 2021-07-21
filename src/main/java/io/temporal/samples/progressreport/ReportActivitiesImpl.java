@@ -40,8 +40,10 @@ public class ReportActivitiesImpl implements ReportActivities {
     // first
     sleep(3);
     workflow.serviceResult("result1");
+    // second
     sleep(3);
     workflow.serviceResult("result2");
+    // third
     sleep(3);
     workflow.serviceResult("result3");
   }
